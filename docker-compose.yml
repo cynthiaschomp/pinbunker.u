@@ -1,0 +1,75 @@
+version: '3.8'
+
+services:
+  # 1. Official Kubo (Go-IPFS) Daemon on porkchop VPS
+  ipfs-node:
+    image: ipfs/kubo:v0.32.0
+    container_name: pinbunker-ipfs-node
+    restart: unless-stopped
+    environment:
+      - IPFS_PATH=/data/ipfs
+      - IPFS_PROFILE=server
+    volumes:
+      - ipfs_staging:/export
+      - ipfs_data:/data/ipfs
+    ports:
+      - "4001:4001"       # IPFS Swarm (P2P listening port on porkchop)
+      - "4001:4001/udp"   # IPFS Swarm UDP (QUIC)
+      - "127.0.0.1:5001:5001" # IPFS RPC API (Internal, secured to local host/docker)
+      - "8080:8080"       # IPFS Gateway
+    command: ["daemon", "--migrate=true", "--enable-gc=true"]
+
+  # 2. Pinata Drop-In REST API Microservice
+  pinata-api:
+    build:
+      context: ./services/pinata_node
+      dockerfile: Dockerfile
+    container_name: pinbunker-pinata-api
+    restart: unless-stopped
+    depends_on:
+      - ipfs-node
+    environment:
+      - KUBO_API_URL=http://ipfs-node:5001
+      - KUBO_GATEWAY_URL=https://pinbunker.u.limo/ipfs
+      - DATABASE_URL=sqlite:////data/pinbunker.db
+      - PINBUNKER_JWT_SECRET=${PINBUNKER_JWT_SECRET:-sovereign_secret_change_me}
+      - ADMIN_API_KEY=${ADMIN_API_KEY:-pb_master_key_bunker777}
+      - ADMIN_API_SECRET=${ADMIN_API_SECRET:-pb_master_secret_porkchop999}
+      - POLYGON_RPC=${POLYGON_RPC:-https://polygon-rpc.com}
+      - BASE_RPC=${BASE_RPC:-https://mainnet.base.org}
+      - TREASURY_WALLET=${TREASURY_WALLET:-0x5A8E8913919e952f4625b290cb962eaFfc91a13e}
+    volumes:
+      - api_data:/data
+    ports:
+      - "5050:5050"
+
+  # 3. Autonomous Compounding & Distribution Daemons
+  autonomous-daemons:
+    build:
+      context: ./services/pinata_node
+      dockerfile: Dockerfile
+    container_name: pinbunker-daemons
+    restart: unless-stopped
+    depends_on:
+      - pinata-api
+    environment:
+      - POLYGON_RPC=${POLYGON_RPC:-https://polygon-rpc.com}
+      - BASE_RPC=${BASE_RPC:-https://mainnet.base.org}
+      - TREASURY_WALLET=${TREASURY_WALLET:-0x5A8E8913919e952f4625b290cb962eaFfc91a13e}
+      - TREASURY_PRIVATE_KEY=${TREASURY_PRIVATE_KEY:-}
+      - NEYNAR_API_KEY=${NEYNAR_API_KEY:-}
+      - FARCASTER_SIGNER_UUID=${FARCASTER_SIGNER_UUID:-}
+      - SCOUT_SIMULATION_MODE=${SCOUT_SIMULATION_MODE:-false}
+    volumes:
+      - ./scripts:/app/scripts
+    command: >
+      bash -c "pip install -r /app/scripts/requirements.txt &&
+               python /app/scripts/xmtp_scout.py"
+
+volumes:
+  ipfs_staging:
+    name: pinbunker_ipfs_staging
+  ipfs_data:
+    name: pinbunker_ipfs_data
+  api_data:
+    name: pinbunker_api_data
