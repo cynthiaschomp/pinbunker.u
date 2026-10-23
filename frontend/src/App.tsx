@@ -7,11 +7,13 @@ import { ProblemComparison } from './components/ProblemComparison';
 import { PricingTiers } from './components/PricingTiers';
 import { SdkIntegrationModal } from './components/SdkIntegrationModal';
 import { UnlockCheckoutModal } from './components/UnlockCheckoutModal';
+import { DmcaModal } from './components/DmcaModal';
 import { Footer } from './components/Footer';
 
 export const App: React.FC = () => {
   const [isSdkModalOpen, setIsSdkModalOpen] = useState(false);
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
+  const [isDmcaOpen, setIsDmcaOpen] = useState(false);
   const [selectedTierId, setSelectedTierId] = useState<string>('builder');
 
   const handleOpenCheckout = (tierId: string = 'builder') => {
@@ -41,7 +43,7 @@ export const App: React.FC = () => {
         <PricingTiers onSelectTier={handleOpenCheckout} />
       </main>
 
-      <Footer />
+      <Footer onOpenDmca={() => setIsDmcaOpen(true)} />
 
       {/* Interactive Modals */}
       <SdkIntegrationModal
@@ -53,6 +55,11 @@ export const App: React.FC = () => {
         isOpen={isCheckoutOpen}
         onClose={() => setIsCheckoutOpen(false)}
         selectedTierId={selectedTierId}
+      />
+
+      <DmcaModal
+        isOpen={isDmcaOpen}
+        onClose={() => setIsDmcaOpen(false)}
       />
     </div>
   );

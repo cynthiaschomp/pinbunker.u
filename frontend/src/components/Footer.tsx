@@ -1,7 +1,11 @@
 import React from 'react';
 import { Shield, Globe, ExternalLink, HeartHandshake } from 'lucide-react';
 
-export const Footer: React.FC = () => {
+interface FooterProps {
+  onOpenDmca?: () => void;
+}
+
+export const Footer: React.FC<FooterProps> = ({ onOpenDmca }) => {
   return (
     <footer className="border-t border-gray-800/80 bg-bunker-900 py-12 text-xs text-gray-400">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -41,6 +45,13 @@ export const Footer: React.FC = () => {
             >
               Capacity Plans
             </a>
+
+            <button
+              onClick={onOpenDmca}
+              className="hover:text-amber-400 transition-colors text-xs text-gray-300 hover:underline"
+            >
+              DMCA / Legal Removal
+            </button>
 
             <a
               href="https://pinbunker.u.limo"
