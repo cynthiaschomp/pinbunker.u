@@ -5,9 +5,10 @@ import { Shield, Terminal, Zap } from 'lucide-react';
 interface NavbarProps {
   onOpenSdkModal: () => void;
   onOpenCheckout: (tierId?: string) => void;
+  onOpenNftStudio?: () => void;
 }
 
-export const Navbar: React.FC<NavbarProps> = ({ onOpenSdkModal, onOpenCheckout }) => {
+export const Navbar: React.FC<NavbarProps> = ({ onOpenSdkModal, onOpenCheckout, onOpenNftStudio }) => {
   return (
     <nav className="sticky top-0 z-40 w-full glass-panel border-b border-gray-800/80">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
@@ -38,8 +39,14 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenSdkModal, onOpenCheckout }
           <a href="#solutions" className="hover:text-bunker-accent transition-colors">
             Solutions
           </a>
-          <a href="#uploader" className="hover:text-bunker-accent transition-colors flex items-center gap-1.5">
+          <button
+            onClick={onOpenNftStudio}
+            className="hover:text-bunker-accent transition-colors flex items-center gap-1.5 text-emerald-400 font-semibold"
+          >
             <Zap className="w-4 h-4 text-bunker-accent" />
+            NFT Studio
+          </button>
+          <a href="#uploader" className="hover:text-bunker-accent transition-colors flex items-center gap-1.5">
             Interactive Trial
           </a>
           <a href="#pricing" className="hover:text-bunker-accent transition-colors">

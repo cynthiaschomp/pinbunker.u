@@ -8,12 +8,14 @@ import { PricingTiers } from './components/PricingTiers';
 import { SdkIntegrationModal } from './components/SdkIntegrationModal';
 import { UnlockCheckoutModal } from './components/UnlockCheckoutModal';
 import { DmcaModal } from './components/DmcaModal';
+import { NftStudioModal } from './components/NftStudioModal';
 import { Footer } from './components/Footer';
 
 export const App: React.FC = () => {
   const [isSdkModalOpen, setIsSdkModalOpen] = useState(false);
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [isDmcaOpen, setIsDmcaOpen] = useState(false);
+  const [isNftStudioOpen, setIsNftStudioOpen] = useState(false);
   const [selectedTierId, setSelectedTierId] = useState<string>('builder');
 
   const handleOpenCheckout = (tierId: string = 'builder') => {
@@ -26,12 +28,14 @@ export const App: React.FC = () => {
       <Navbar
         onOpenSdkModal={() => setIsSdkModalOpen(true)}
         onOpenCheckout={handleOpenCheckout}
+        onOpenNftStudio={() => setIsNftStudioOpen(true)}
       />
 
       <main className="flex-grow">
         <Hero
           onOpenCheckout={handleOpenCheckout}
           onOpenSdkModal={() => setIsSdkModalOpen(true)}
+          onOpenNftStudio={() => setIsNftStudioOpen(true)}
         />
 
         <NodeStatusWidget />
@@ -60,6 +64,11 @@ export const App: React.FC = () => {
       <DmcaModal
         isOpen={isDmcaOpen}
         onClose={() => setIsDmcaOpen(false)}
+      />
+
+      <NftStudioModal
+        isOpen={isNftStudioOpen}
+        onClose={() => setIsNftStudioOpen(false)}
       />
     </div>
   );

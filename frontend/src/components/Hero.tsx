@@ -4,9 +4,10 @@ import { ArrowRight, CheckCircle2, ShieldCheck, HeartHandshake, Sparkles } from 
 interface HeroProps {
   onOpenCheckout: (tierId?: string) => void;
   onOpenSdkModal: () => void;
+  onOpenNftStudio?: () => void;
 }
 
-export const Hero: React.FC<HeroProps> = ({ onOpenCheckout, onOpenSdkModal }) => {
+export const Hero: React.FC<HeroProps> = ({ onOpenCheckout, onOpenSdkModal, onOpenNftStudio }) => {
   return (
     <section className="relative overflow-hidden pt-16 pb-20 lg:pt-24 lg:pb-28">
       {/* Soft ambient glow */}
@@ -43,11 +44,19 @@ export const Hero: React.FC<HeroProps> = ({ onOpenCheckout, onOpenSdkModal }) =>
             <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
           </button>
 
+          <button
+            onClick={onOpenNftStudio}
+            className="w-full sm:w-auto px-7 py-4 rounded-xl bg-gradient-to-r from-emerald-500/20 to-cyan-500/20 hover:from-emerald-500/30 hover:to-cyan-500/30 text-white font-semibold text-base border border-emerald-500/40 transition-all flex items-center justify-center gap-2"
+          >
+            <Sparkles className="w-5 h-5 text-bunker-accent" />
+            <span>Create & Mint an NFT</span>
+          </button>
+
           <a
             href="#uploader"
             className="w-full sm:w-auto px-7 py-4 rounded-xl bg-gray-800/90 hover:bg-gray-700/90 text-white font-semibold text-base border border-gray-700 transition-all flex items-center justify-center"
           >
-            <span>Try It Free with Any File</span>
+            <span>Try It Free</span>
           </a>
         </div>
 
