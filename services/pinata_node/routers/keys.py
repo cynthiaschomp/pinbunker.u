@@ -102,3 +102,70 @@ async def list_keys(wallet_address: str, db: Session = Depends(get_db)):
         }
         for k in keys
     ]
+
+class ClaimInviteRequest(BaseModel):
+    code: str
+    wallet_address: str
+
+@router.post("/claimInvite")
+async def claim_invite(
+    payload: ClaimInviteRequest,
+    db: Session = Depends(get_db)
+):
+    from models import InviteCode
+    code_str = payload.code.strip()
+    wallet = payload.wallet_address.strip().lower()
+
+    invite = db.query(InviteCode).filter(InviteCode.code == code_str).first()
+    if not invite:
+        # If code equals default tester shortcut, create it on demand
+        if code_str.lower() in ["tester", "vip"]:
+            invite = InviteCode(code=code_str, tier="lifetime", is_claimed=False)
+            db.add(invite)
+            db.commit()
+        else:
+            raise HTTPException(status_code=404, detail="Invalid invitation code.")
+
+    if invite.is_claimed:
+        if invite.claimed_by_wallet == wallet:
+            # Re-fetch their already generated key
+            existing = db.query(ApiKey).filter(ApiKey.user_wallet == wallet).first()
+            if existing:
+                return {
+                    "status": "already_claimed",
+                    "tier": existing.tier,
+                    "api_key": existing.api_key,
+                    "api_secret": existing.api_secret
+                }
+        raise HTTPException(status_code=400, detail="This invitation link has already been claimed by another wallet.")
+
+    # Mark invite as claimed by this wallet
+    invite.is_claimed = True
+    invite.claimed_by_wallet = wallet
+    invite.claimed_at = datetime.datetime.utcnow()
+
+    # Generate lifetime credentials locked to this specific wallet
+    key_id = f"pb_key_{secrets.token_hex(8)}"
+    api_key = f"pb_gift_{secrets.token_hex(16)}"
+    api_secret = f"pb_sec_{secrets.token_hex(24)}"
+    jwt_token = create_access_token(wallet, invite.tier)
+
+    new_key = ApiKey(
+        key_id=key_id,
+        api_key=api_key,
+        api_secret=api_secret,
+        jwt_token=jwt_token,
+        user_wallet=wallet,
+        tier=invite.tier,
+        is_active=True
+    )
+    db.add(new_key)
+    db.commit()
+
+    return {
+        "status": "success",
+        "tier": invite.tier,
+        "api_key": api_key,
+        "api_secret": api_secret,
+        "wallet_address": wallet
+    }

@@ -38,3 +38,14 @@ class Subscription(Base):
     tx_hash = Column(String(66), nullable=True)
     network = Column(String(32), default="polygon") # polygon, base
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
+
+class InviteCode(Base):
+    __tablename__ = "invite_codes"
+
+    id = Column(Integer, primary_key=True, index=True)
+    code = Column(String(64), unique=True, index=True)
+    tier = Column(String(32), default="lifetime")
+    is_claimed = Column(Boolean, default=False)
+    claimed_by_wallet = Column(String(42), nullable=True)
+    claimed_at = Column(DateTime, nullable=True)
+    created_at = Column(DateTime, default=datetime.datetime.utcnow)

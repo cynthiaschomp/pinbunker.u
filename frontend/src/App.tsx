@@ -11,6 +11,7 @@ import { DmcaModal } from './components/DmcaModal';
 import { NftStudioModal } from './components/NftStudioModal';
 import { VaultBrowserModal } from './components/VaultBrowserModal';
 import { GiftRedeemModal } from './components/GiftRedeemModal';
+import { AdminDashboardModal } from './components/AdminDashboardModal';
 import { Footer } from './components/Footer';
 
 export const App: React.FC = () => {
@@ -19,6 +20,10 @@ export const App: React.FC = () => {
   const [isDmcaOpen, setIsDmcaOpen] = useState(false);
   const [isNftStudioOpen, setIsNftStudioOpen] = useState(false);
   const [isVaultOpen, setIsVaultOpen] = useState(false);
+  const [isAdminOpen, setIsAdminOpen] = useState(() => {
+    const params = new URLSearchParams(window.location.search);
+    return params.has('admin');
+  });
   const [isGiftOpen, setIsGiftOpen] = useState(() => {
     // Check if user came from invite link (e.g. ?gift=tester or ?invite=...)
     const params = new URLSearchParams(window.location.search);
