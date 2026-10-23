@@ -9,6 +9,8 @@ import { SdkIntegrationModal } from './components/SdkIntegrationModal';
 import { UnlockCheckoutModal } from './components/UnlockCheckoutModal';
 import { DmcaModal } from './components/DmcaModal';
 import { NftStudioModal } from './components/NftStudioModal';
+import { VaultBrowserModal } from './components/VaultBrowserModal';
+import { GiftRedeemModal } from './components/GiftRedeemModal';
 import { Footer } from './components/Footer';
 
 export const App: React.FC = () => {
@@ -16,6 +18,12 @@ export const App: React.FC = () => {
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [isDmcaOpen, setIsDmcaOpen] = useState(false);
   const [isNftStudioOpen, setIsNftStudioOpen] = useState(false);
+  const [isVaultOpen, setIsVaultOpen] = useState(false);
+  const [isGiftOpen, setIsGiftOpen] = useState(() => {
+    // Check if user came from invite link (e.g. ?gift=tester or ?invite=...)
+    const params = new URLSearchParams(window.location.search);
+    return params.has('gift') || params.has('invite');
+  });
   const [selectedTierId, setSelectedTierId] = useState<string>('builder');
 
   const handleOpenCheckout = (tierId: string = 'builder') => {
@@ -29,6 +37,7 @@ export const App: React.FC = () => {
         onOpenSdkModal={() => setIsSdkModalOpen(true)}
         onOpenCheckout={handleOpenCheckout}
         onOpenNftStudio={() => setIsNftStudioOpen(true)}
+        onOpenVault={() => setIsVaultOpen(true)}
       />
 
       <main className="flex-grow">
@@ -69,6 +78,17 @@ export const App: React.FC = () => {
       <NftStudioModal
         isOpen={isNftStudioOpen}
         onClose={() => setIsNftStudioOpen(false)}
+      />
+
+      <VaultBrowserModal
+        isOpen={isVaultOpen}
+        onClose={() => setIsVaultOpen(false)}
+      />
+
+      <GiftRedeemModal
+        isOpen={isGiftOpen}
+        onClose={() => setIsGiftOpen(false)}
+        onOpenVault={() => setIsVaultOpen(true)}
       />
     </div>
   );

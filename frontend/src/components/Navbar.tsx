@@ -6,9 +6,15 @@ interface NavbarProps {
   onOpenSdkModal: () => void;
   onOpenCheckout: (tierId?: string) => void;
   onOpenNftStudio?: () => void;
+  onOpenVault?: () => void;
 }
 
-export const Navbar: React.FC<NavbarProps> = ({ onOpenSdkModal, onOpenCheckout, onOpenNftStudio }) => {
+export const Navbar: React.FC<NavbarProps> = ({ 
+  onOpenSdkModal, 
+  onOpenCheckout, 
+  onOpenNftStudio,
+  onOpenVault 
+}) => {
   return (
     <nav className="sticky top-0 z-40 w-full glass-panel border-b border-gray-800/80">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
@@ -22,9 +28,6 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenSdkModal, onOpenCheckout, 
             <div className="flex items-center gap-2">
               <span className="font-extrabold text-xl tracking-tight text-white font-mono">
                 PIN<span className="text-bunker-accent">BUNKER</span>
-              </span>
-              <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                Web3 Sovereign
               </span>
             </div>
             <p className="text-xs text-gray-400 flex items-center gap-1.5 font-sans">
@@ -40,15 +43,18 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenSdkModal, onOpenCheckout, 
             Solutions
           </a>
           <button
+            onClick={onOpenVault}
+            className="hover:text-bunker-accent transition-colors flex items-center gap-1.5 text-cyan-400 font-semibold"
+          >
+            My Vault
+          </button>
+          <button
             onClick={onOpenNftStudio}
             className="hover:text-bunker-accent transition-colors flex items-center gap-1.5 text-emerald-400 font-semibold"
           >
             <Zap className="w-4 h-4 text-bunker-accent" />
             NFT Studio
           </button>
-          <a href="#uploader" className="hover:text-bunker-accent transition-colors flex items-center gap-1.5">
-            Interactive Trial
-          </a>
           <a href="#pricing" className="hover:text-bunker-accent transition-colors">
             Access Plans
           </a>
