@@ -1,6 +1,8 @@
 export interface TierConfig {
   id: string;
   name: string;
+  badge?: string;
+  idealFor: string;
   price: string;
   period: string;
   storage: string;
@@ -15,17 +17,18 @@ export interface TierConfig {
 export const TIERS: TierConfig[] = [
   {
     id: 'builder',
-    name: 'Builder Pass',
+    name: 'Builder Plan',
+    idealFor: 'For independent creators, developers, and new NFT collections',
     price: '$9',
     period: '/ month in USDC',
-    storage: '15 GB Sovereign Pinned Storage',
-    bandwidth: '100 GB High-Speed Bandwidth',
+    storage: '15 GB Dedicated Pinned Storage',
+    bandwidth: '100 GB High-Throughput Bandwidth',
     features: [
-      '100% Drop-In Pinata SDK Compatibility',
-      'Unlimited API Keys & JWTs',
-      '0 HTML Gateway Restrictions (ERR_ID:00023 fixed)',
-      '1-Click USDC Checkout on Polygon & Base',
-      'Continuous DHT Announcements from porkchop'
+      'Universal Web3 SDK & API Compatibility',
+      'Unlimited API Credentials & Access Tokens',
+      'Full Unrestricted Gateway Loading for Apps & Games',
+      'Direct 1-Click Wallet Checkout on Polygon & Base',
+      'Continuous Global Decentralized Persistence'
     ],
     recommended: false,
     lockAddressPolygon: '0x1A2B3C4D5E6F708192aBcDeF1234567890abcdef',
@@ -34,18 +37,20 @@ export const TIERS: TierConfig[] = [
   },
   {
     id: 'pro',
-    name: 'Pro Fleet',
+    name: 'Production Fleet',
+    badge: 'Recommended for Production',
+    idealFor: 'For high-volume NFT collections, production dApps, and studios',
     price: '$29',
     period: '/ month in USDC',
-    storage: '75 GB Sovereign Pinned Storage',
-    bandwidth: '500 GB High-Speed Bandwidth',
+    storage: '75 GB High-Performance Storage',
+    bandwidth: '500 GB Accelerated Global Bandwidth',
     features: [
-      'Everything in Builder Pass',
-      'Dedicated Subdomain Gateway (yourname.pinbunker.u.limo)',
-      'Zero 429 Rate Limits During High Mint Spikes',
-      'Sub-150ms Global P2P Resolution',
-      'Custom Content-Type and CORS Header Injector',
-      'Priority WebSocket Swarm Peering'
+      'Includes Everything in the Builder Plan',
+      'Dedicated Custom Subdomain Gateway',
+      'Optimized High-Volume Traffic Routing for Mints',
+      'Fast Multi-Region Global Content Resolution',
+      'Custom Content Headers & Gateway Controls',
+      'Direct High-Priority Swarm Connections'
     ],
     recommended: true,
     lockAddressPolygon: '0x3C4D5E6F708192aBcDeF1234567890abcdef1A2B',
@@ -54,17 +59,19 @@ export const TIERS: TierConfig[] = [
   },
   {
     id: 'lifetime',
-    name: 'Lifetime Founder Bunker',
+    name: 'Lifetime Founder',
+    badge: 'Permanent Storage',
+    idealFor: 'For foundational protocols, permanent archives, and long-term collections',
     price: '$99',
     period: 'USDC One-Time',
-    storage: '150 GB Lifetime Sovereign Pinning',
-    bandwidth: '1 TB / Month Bandwidth',
+    storage: '150 GB Lifetime Pinned Storage',
+    bandwidth: '1 TB Accelerated Monthly Bandwidth',
     features: [
-      'Zero Recurring Bills Forever',
-      'Direct P2P Peering with porkchop Kubo node',
-      'Founder On-Chain NFT Badge with Protocol Voting',
-      'Priority Encrypted XMTP Channel with Cynthia Schomp',
-      'Lifetime Access to Future Autonomous Agent Toolchains'
+      'Permanent One-Time Access — Zero Recurring Invoices',
+      'Direct Dedicated P2P Node Peering',
+      'On-Chain Founder Recognition Badge',
+      'Priority Protocol Support Channel',
+      'Lifetime Access to Next-Gen Storage Features'
     ],
     recommended: false,
     lockAddressPolygon: '0x5E6F708192aBcDeF1234567890abcdef1A2B3C4D',

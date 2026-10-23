@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, ShieldCheck, ExternalLink, Check, Sparkles, Layers, ArrowUpRight } from 'lucide-react';
+import { X, ShieldCheck, Check, ArrowUpRight } from 'lucide-react';
 import { TIERS, TierConfig } from '../config/unlock';
 import { useAccount } from 'wagmi';
 
@@ -14,7 +14,7 @@ export const UnlockCheckoutModal: React.FC<UnlockCheckoutModalProps> = ({
   onClose,
   selectedTierId = 'builder',
 }) => {
-  const { isConnected, address } = useAccount();
+  const { isConnected } = useAccount();
   const [currentTierId, setCurrentTierId] = useState<string>(selectedTierId);
   const [selectedNetwork, setSelectedNetwork] = useState<'polygon' | 'base'>('polygon');
   const [isProcessing, setIsProcessing] = useState(false);
@@ -27,7 +27,6 @@ export const UnlockCheckoutModal: React.FC<UnlockCheckoutModalProps> = ({
 
   const handle1ClickCheckout = () => {
     setIsProcessing(true);
-    // Simulate Unlock checkout completion for UX demo
     setTimeout(() => {
       setIsProcessing(false);
       setTxSuccess(true);
@@ -52,17 +51,17 @@ export const UnlockCheckoutModal: React.FC<UnlockCheckoutModalProps> = ({
             <ShieldCheck className="w-6 h-6" />
           </div>
           <div>
-            <h3 className="text-xl font-bold font-mono text-white flex items-center gap-2">
-              Unlock Protocol Checkout
+            <h3 className="text-xl font-bold text-white">
+              Instant Access Pass
             </h3>
-            <p className="text-xs text-gray-400 font-mono">
-              100% Crypto-Native • Zero KYC • USDC Subscription NFT
+            <p className="text-xs text-gray-400">
+              Fast, Private Wallet Checkout • No Credit Card or Forms Needed
             </p>
           </div>
         </div>
 
-        {/* Tier Selector */}
-        <div className="grid grid-cols-3 gap-2 mb-6 font-mono text-xs">
+        {/* Plan Selector */}
+        <div className="grid grid-cols-3 gap-2 mb-6 text-xs">
           {TIERS.map(t => (
             <button
               key={t.id}
@@ -70,24 +69,24 @@ export const UnlockCheckoutModal: React.FC<UnlockCheckoutModalProps> = ({
                 setCurrentTierId(t.id);
                 setTxSuccess(false);
               }}
-              className={`p-2.5 rounded-xl border text-center transition-all ${
+              className={`p-3 rounded-xl border text-center transition-all ${
                 currentTierId === t.id
                   ? 'border-bunker-accent bg-emerald-500/10 text-white font-bold'
                   : 'border-gray-800 bg-gray-900/60 text-gray-400 hover:text-gray-200'
               }`}
             >
-              <div className="truncate">{t.name}</div>
-              <div className="text-bunker-accent text-[11px] mt-0.5">{t.price}</div>
+              <div className="truncate font-semibold">{t.name}</div>
+              <div className="text-bunker-accent font-bold mt-0.5">{t.price}</div>
             </button>
           ))}
         </div>
 
         {/* Network Selection */}
         <div className="mb-6">
-          <label className="block text-xs font-mono text-gray-400 uppercase tracking-wider mb-2">
-            Select Settlement Network (USDC)
+          <label className="block text-xs uppercase tracking-wider text-gray-400 font-semibold mb-2">
+            Select Your Preferred Network (USDC)
           </label>
-          <div className="grid grid-cols-2 gap-3 font-mono text-xs">
+          <div className="grid grid-cols-2 gap-3 text-xs">
             <button
               onClick={() => setSelectedNetwork('polygon')}
               className={`p-3 rounded-xl border flex items-center justify-between transition-all ${
@@ -98,7 +97,7 @@ export const UnlockCheckoutModal: React.FC<UnlockCheckoutModalProps> = ({
             >
               <span className="flex items-center gap-2">
                 <span className="w-2.5 h-2.5 rounded-full bg-purple-400"></span>
-                Polygon Network
+                Polygon
               </span>
               <span className="text-[10px] text-gray-400">Gas &lt; $0.01</span>
             </button>
@@ -113,7 +112,7 @@ export const UnlockCheckoutModal: React.FC<UnlockCheckoutModalProps> = ({
             >
               <span className="flex items-center gap-2">
                 <span className="w-2.5 h-2.5 rounded-full bg-blue-400"></span>
-                Base (Coinbase L2)
+                Base Network
               </span>
               <span className="text-[10px] text-gray-400">Gas &lt; $0.005</span>
             </button>
@@ -121,33 +120,27 @@ export const UnlockCheckoutModal: React.FC<UnlockCheckoutModalProps> = ({
         </div>
 
         {/* Selected Tier Details Summary */}
-        <div className="p-4 rounded-xl bg-black/60 border border-gray-800 mb-6 font-mono text-xs space-y-2">
+        <div className="p-4 rounded-xl bg-black/60 border border-gray-800 mb-6 text-xs space-y-2">
           <div className="flex justify-between items-center text-gray-300">
-            <span>Pass Type:</span>
+            <span>Selected Plan:</span>
             <span className="text-white font-bold">{currentTier.name}</span>
           </div>
           <div className="flex justify-between items-center text-gray-300">
-            <span>Amount:</span>
-            <span className="text-bunker-accent font-bold text-sm">{currentTier.price} USDC</span>
+            <span>Total:</span>
+            <span className="text-bunker-accent font-bold text-sm font-mono">{currentTier.price} USDC</span>
           </div>
           <div className="flex justify-between items-center text-gray-300">
-            <span>Storage:</span>
+            <span>Capacity:</span>
             <span className="text-white">{currentTier.storage}</span>
-          </div>
-          <div className="flex justify-between items-center text-gray-300">
-            <span>Unlock Lock Contract:</span>
-            <span className="text-gray-400 truncate max-w-[200px]" title={lockAddress}>
-              {lockAddress.substring(0, 8)}...{lockAddress.substring(lockAddress.length - 6)}
-            </span>
           </div>
         </div>
 
         {txSuccess ? (
-          <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-center font-mono">
+          <div className="p-5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-center">
             <Check className="w-8 h-8 text-emerald-400 mx-auto mb-2" />
-            <h4 className="text-white font-bold text-sm">Pass Activated Successfully!</h4>
-            <p className="text-xs text-emerald-300/80 mt-1">
-              Your sovereign PinBunker quota is now live on porkchop. You can issue API keys from the SDK modal.
+            <h4 className="text-white font-bold text-sm">Access Pass Activated!</h4>
+            <p className="text-xs text-emerald-300/80 mt-1 leading-relaxed">
+              Your storage capacity is now live. You can generate your developer API keys from the quick start modal anytime.
             </p>
           </div>
         ) : (
@@ -155,12 +148,12 @@ export const UnlockCheckoutModal: React.FC<UnlockCheckoutModalProps> = ({
             <button
               onClick={handle1ClickCheckout}
               disabled={isProcessing}
-              className="w-full py-3.5 px-4 rounded-xl bg-bunker-accent text-black font-mono font-bold text-sm hover:bg-emerald-300 transition-all shadow-lg shadow-emerald-500/25 flex items-center justify-center gap-2"
+              className="w-full py-3.5 px-4 rounded-xl bg-bunker-accent text-black font-bold text-sm hover:bg-emerald-300 transition-all shadow-lg shadow-emerald-500/25 flex items-center justify-center gap-2"
             >
               {isProcessing ? (
-                <span>Confirming USDC in Wallet...</span>
+                <span>Confirming in Wallet...</span>
               ) : (
-                <span>Pay {currentTier.price} USDC via Unlock Protocol</span>
+                <span>Confirm {currentTier.price} USDC with Wallet</span>
               )}
             </button>
 
@@ -168,9 +161,9 @@ export const UnlockCheckoutModal: React.FC<UnlockCheckoutModalProps> = ({
               href={currentTier.unlockUrl}
               target="_blank"
               rel="noreferrer"
-              className="w-full py-2.5 px-4 rounded-xl bg-gray-800/80 hover:bg-gray-700/80 text-gray-300 hover:text-white font-mono text-xs transition-colors flex items-center justify-center gap-1.5 border border-gray-700"
+              className="w-full py-2.5 px-4 rounded-xl bg-gray-800/80 hover:bg-gray-700/80 text-gray-300 hover:text-white text-xs transition-colors flex items-center justify-center gap-1.5 border border-gray-700"
             >
-              <span>Open in Official Unlock Checkout App</span>
+              <span>Alternative Web Checkout</span>
               <ArrowUpRight className="w-3.5 h-3.5" />
             </a>
           </div>

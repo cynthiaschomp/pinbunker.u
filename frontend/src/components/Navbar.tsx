@@ -1,6 +1,6 @@
 import React from 'react';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
-import { Shield, Terminal, Zap, Radio } from 'lucide-react';
+import { Shield, Terminal, Zap } from 'lucide-react';
 
 interface NavbarProps {
   onOpenSdkModal: () => void;
@@ -22,35 +22,35 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenSdkModal, onOpenCheckout }
               <span className="font-extrabold text-xl tracking-tight text-white font-mono">
                 PIN<span className="text-bunker-accent">BUNKER</span>
               </span>
-              <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                .u / .limo
+              <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                Web3 Sovereign
               </span>
             </div>
-            <p className="text-xs text-gray-400 flex items-center gap-1.5 font-mono">
+            <p className="text-xs text-gray-400 flex items-center gap-1.5 font-sans">
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-              Sovereign VPS: <span className="text-gray-300">porkchop</span>
+              <span>Decentralized Network Active</span>
             </p>
           </div>
         </div>
 
         {/* Center Nav Links */}
         <div className="hidden md:flex items-center gap-8 font-medium text-sm text-gray-300">
+          <a href="#solutions" className="hover:text-bunker-accent transition-colors">
+            Solutions
+          </a>
           <a href="#uploader" className="hover:text-bunker-accent transition-colors flex items-center gap-1.5">
             <Zap className="w-4 h-4 text-bunker-accent" />
-            Live Pinning Test
-          </a>
-          <a href="#comparison" className="hover:text-bunker-accent transition-colors">
-            Pinata vs PinBunker
+            Interactive Trial
           </a>
           <a href="#pricing" className="hover:text-bunker-accent transition-colors">
-            $9/mo USDC Pricing
+            Access Plans
           </a>
           <button
             onClick={onOpenSdkModal}
-            className="hover:text-bunker-accent transition-colors flex items-center gap-1.5 font-mono text-xs bg-gray-800/60 px-3 py-1.5 rounded-lg border border-gray-700/60"
+            className="hover:text-bunker-accent transition-colors flex items-center gap-1.5 text-xs bg-gray-800/80 px-3.5 py-1.5 rounded-lg border border-gray-700/80"
           >
             <Terminal className="w-3.5 h-3.5 text-cyan-400" />
-            Drop-In SDK Code
+            Developer Integration
           </button>
         </div>
 
@@ -58,9 +58,9 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenSdkModal, onOpenCheckout }
         <div className="flex items-center gap-3">
           <button
             onClick={() => onOpenCheckout('builder')}
-            className="hidden sm:inline-flex items-center justify-center px-4 py-2 text-xs font-semibold rounded-lg bg-bunker-accent text-black hover:bg-emerald-300 transition-all shadow-md shadow-emerald-500/20 font-mono"
+            className="hidden sm:inline-flex items-center justify-center px-4 py-2 text-xs font-semibold rounded-lg bg-bunker-accent text-black hover:bg-emerald-300 transition-all shadow-md shadow-emerald-500/20"
           >
-            Get Builder Pass ($9)
+            Get Started
           </button>
           <ConnectButton 
             showBalance={false}

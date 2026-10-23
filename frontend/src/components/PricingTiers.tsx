@@ -1,6 +1,6 @@
 import React from 'react';
 import { TIERS, TierConfig } from '../config/unlock';
-import { Check, Shield, Zap, Crown } from 'lucide-react';
+import { Check, Shield, Crown } from 'lucide-react';
 
 interface PricingTiersProps {
   onSelectTier: (tierId: string) => void;
@@ -9,18 +9,17 @@ interface PricingTiersProps {
 export const PricingTiers: React.FC<PricingTiersProps> = ({ onSelectTier }) => {
   return (
     <section id="pricing" className="py-20 relative">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <h2 className="text-xs uppercase font-mono tracking-widest text-bunker-accent mb-3 flex items-center justify-center gap-2">
-            <Zap className="w-4 h-4" />
-            Simple Crypto-Native Subscription Plans
+          <h2 className="text-xs uppercase tracking-widest text-bunker-accent font-semibold mb-3">
+            CAPACITY & ACCESS PLANS
           </h2>
-          <p className="text-3xl sm:text-5xl font-extrabold text-white font-mono">
-            Zero Stripe KYC. 1-Click USDC.
+          <p className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight">
+            Scale for Every Project Phase
           </p>
-          <p className="text-gray-400 mt-4 text-base">
-            Pay with USDC or POL on Polygon or Base via Unlock Protocol. Cancel or transfer your access NFT anytime.
+          <p className="text-gray-300 mt-4 text-base sm:text-lg leading-relaxed">
+            Direct crypto checkout with your wallet on Polygon or Base. Simple, transparent access without contracts, hidden surcharges, or banking friction.
           </p>
         </div>
 
@@ -40,60 +39,58 @@ export const PricingTiers: React.FC<PricingTiersProps> = ({ onSelectTier }) => {
                 }`}
               >
                 {/* Popular Pill */}
-                {tier.recommended && (
-                  <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-bunker-accent text-black font-mono text-xs font-extrabold uppercase tracking-wide shadow-md shadow-emerald-500/30">
-                    Most Popular for Production
-                  </div>
-                )}
-
-                {isLifetime && (
-                  <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-gradient-to-r from-amber-400 to-orange-500 text-black font-mono text-xs font-extrabold uppercase tracking-wide shadow-md shadow-amber-500/30 flex items-center gap-1.5">
-                    <Crown className="w-3.5 h-3.5" />
-                    Lifetime Sovereign
+                {tier.badge && (
+                  <div className={`absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full text-xs font-bold uppercase tracking-wide shadow-md ${
+                    isLifetime 
+                      ? 'bg-gradient-to-r from-amber-400 to-orange-500 text-black shadow-amber-500/20 flex items-center gap-1.5' 
+                      : 'bg-bunker-accent text-black shadow-emerald-500/20'
+                  }`}>
+                    {isLifetime && <Crown className="w-3.5 h-3.5" />}
+                    <span>{tier.badge}</span>
                   </div>
                 )}
 
                 <div>
                   {/* Header */}
-                  <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-xl font-bold font-mono text-white flex items-center gap-2">
+                  <div className="mb-2">
+                    <h3 className="text-2xl font-bold text-white">
                       {tier.name}
                     </h3>
-                  </div>
-
-                  {/* Price */}
-                  <div className="mb-6">
-                    <div className="flex items-baseline gap-2">
-                      <span className="text-4xl sm:text-5xl font-extrabold font-mono text-white tracking-tight">
-                        {tier.price}
-                      </span>
-                      <span className="text-sm font-mono text-gray-400">
-                        {tier.period}
-                      </span>
-                    </div>
-                    <p className="text-xs text-emerald-400 font-mono mt-1">
-                      Polygon & Base (Zero KYC)
+                    <p className="text-xs text-gray-400 mt-1.5 leading-relaxed">
+                      {tier.idealFor}
                     </p>
                   </div>
 
-                  {/* Specs Pill */}
-                  <div className="bg-gray-900/80 rounded-xl p-3 border border-gray-800 mb-6 font-mono text-xs space-y-1">
-                    <div className="text-gray-300 font-semibold flex items-center justify-between">
-                      <span>Storage:</span>
-                      <span className="text-white">{tier.storage}</span>
+                  {/* Price */}
+                  <div className="my-6 py-4 border-y border-gray-800/80">
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-4xl sm:text-5xl font-extrabold text-white tracking-tight font-mono">
+                        {tier.price}
+                      </span>
+                      <span className="text-sm text-gray-400">
+                        {tier.period}
+                      </span>
                     </div>
-                    <div className="text-gray-300 font-semibold flex items-center justify-between">
-                      <span>Bandwidth:</span>
-                      <span className="text-white">{tier.bandwidth}</span>
+                  </div>
+
+                  {/* Specs Pill */}
+                  <div className="bg-gray-900/90 rounded-xl p-3.5 border border-gray-800 mb-6 text-xs space-y-1.5">
+                    <div className="text-gray-300 flex items-center justify-between">
+                      <span className="text-gray-400">Capacity:</span>
+                      <span className="text-white font-semibold">{tier.storage}</span>
+                    </div>
+                    <div className="text-gray-300 flex items-center justify-between">
+                      <span className="text-gray-400">Bandwidth:</span>
+                      <span className="text-white font-semibold">{tier.bandwidth}</span>
                     </div>
                   </div>
 
                   {/* Features List */}
-                  <div className="space-y-3.5 mb-8">
+                  <div className="space-y-3 mb-8">
                     {tier.features.map((feature, idx) => (
                       <div key={idx} className="flex items-start gap-2.5">
                         <Check className="w-4 h-4 text-bunker-accent shrink-0 mt-0.5" />
-                        <span className="text-xs text-gray-300 font-medium leading-relaxed">
+                        <span className="text-xs text-gray-300 leading-relaxed">
                           {feature}
                         </span>
                       </div>
@@ -104,7 +101,7 @@ export const PricingTiers: React.FC<PricingTiersProps> = ({ onSelectTier }) => {
                 {/* Checkout CTA */}
                 <button
                   onClick={() => onSelectTier(tier.id)}
-                  className={`w-full py-3.5 px-4 rounded-xl font-mono font-bold text-sm transition-all flex items-center justify-center gap-2 ${
+                  className={`w-full py-3.5 px-4 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 ${
                     isPro
                       ? 'bg-bunker-accent text-black hover:bg-emerald-300 shadow-lg shadow-emerald-500/20'
                       : isLifetime
@@ -114,7 +111,7 @@ export const PricingTiers: React.FC<PricingTiersProps> = ({ onSelectTier }) => {
                 >
                   <Shield className="w-4 h-4" />
                   <span>
-                    {isLifetime ? 'Secure Lifetime Bunker' : `Subscribe in USDC (${tier.price})`}
+                    {isLifetime ? 'Activate Lifetime Access' : `Select ${tier.name}`}
                   </span>
                 </button>
 

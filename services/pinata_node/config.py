@@ -20,7 +20,7 @@ class Settings(BaseSettings):
     
     # Master Admin / Development bypass key
     ADMIN_API_KEY: str = os.getenv("ADMIN_API_KEY", "pb_master_key_bunker777")
-    ADMIN_API_SECRET: str = os.getenv("ADMIN_API_SECRET", "pb_master_secret_porkchop999")
+    ADMIN_API_SECRET: str = os.getenv("ADMIN_API_SECRET", "pb_master_secret_vault999")
     
     # Unlock Protocol & Web3
     POLYGON_RPC: str = os.getenv("POLYGON_RPC", "https://polygon-rpc.com")

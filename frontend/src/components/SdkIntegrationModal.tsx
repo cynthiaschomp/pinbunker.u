@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Copy, Check, Terminal, Key, ShieldCheck, Code2 } from 'lucide-react';
+import { X, Copy, Check, Key, ShieldCheck, Code2 } from 'lucide-react';
 import { useAccount, useSignMessage } from 'wagmi';
 import { PINBUNKER_API_URL } from '../utils/ipfs';
 
@@ -34,13 +34,13 @@ export const SdkIntegrationModal: React.FC<SdkIntegrationModalProps> = ({ isOpen
 
     try {
       const timestamp = new Date().toISOString();
-      const message = `Sign this message to generate PinBunker Sovereign IPFS API keys.\nWallet: ${address}\nTimestamp: ${timestamp}`;
+      const message = `Sign this message to issue your PinBunker API credentials.\nWallet: ${address}\nTimestamp: ${timestamp}`;
       
       let signature = "";
       try {
         signature = await signMessageAsync({ account: address, message });
       } catch (e) {
-        // Fallback for offline demo
+        // Fallback for demo
       }
 
       const res = await fetch(`${PINBUNKER_API_URL}/api/v1/keys/generate`, {
@@ -62,14 +62,13 @@ export const SdkIntegrationModal: React.FC<SdkIntegrationModalProps> = ({ isOpen
           jwt: data.JWT,
         });
       } else {
-        throw new Error('Key generation error');
+        throw new Error('Key generation failed');
       }
     } catch (err) {
-      // Local fallback key for demo
       setGeneratedKey({
         apiKey: 'pb_live_' + Math.random().toString(36).substring(2, 18),
         apiSecret: 'pb_sec_' + Math.random().toString(36).substring(2, 34),
-        jwt: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.pinbunker_sovereign_jwt',
+        jwt: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.pinbunker_access_token',
       });
     } finally {
       setIsGenerating(false);
@@ -77,66 +76,78 @@ export const SdkIntegrationModal: React.FC<SdkIntegrationModalProps> = ({ isOpen
   };
 
   const currentApiKey = generatedKey?.apiKey || 'YOUR_PINBUNKER_API_KEY';
-  const currentApiSecret = generatedKey?.apiSecret || 'YOUR_PINBUNKER_API_SECRET';
-  const currentJwt = generatedKey?.jwt || 'YOUR_PINBUNKER_JWT';
+  const currentApiSecret = generatedKey?.apiSecret || 'YOUR_PINBUNKER_SECRET_KEY';
+  const currentJwt = generatedKey?.jwt || 'YOUR_PINBUNKER_ACCESS_TOKEN';
 
-  const nodejsCode = `// 100% Drop-In with @pinata/sdk!
-// Simply override the baseURL to Cynthia's porkchop PinBunker API
-const pinataSDK = require('@pinata/sdk');
+  const nodejsCode = `// Connect to PinBunker using standard Node.js
+const axios = require('axios');
+const FormData = require('form-data');
+const fs = require('fs');
 
-const pinata = new pinataSDK({
-  pinataApiKey: '${currentApiKey}',
-  pinataSecretApiKey: '${currentApiSecret}',
-  // Direct Drop-In URL:
-  pinataApiUrl: 'https://api.pinbunker.u.limo'
-});
+const API_BASE = 'https://api.pinbunker.u.limo';
+const API_KEY = '${currentApiKey}';
+const API_SECRET = '${currentApiSecret}';
 
-// Test authentication
-const auth = await pinata.testAuthentication();
-console.log('PinBunker Connected:', auth.message);
+// 1. Check Connection
+async function testConnection() {
+  const res = await axios.get(\`\${API_BASE}/data/testAuthentication\`, {
+    headers: { pinata_api_key: API_KEY, pinata_secret_api_key: API_SECRET }
+  });
+  console.log('Connected to PinBunker:', res.data.message);
+}
 
-// Pin JSON (NFT Metadata)
-const result = await pinata.pinJSONToIPFS({
-  name: "PinBunker Genesis NFT",
-  description: "Sovereign Web3 storage without centralized KYC",
-  image: "ipfs://bafybeigdyrzt5sfp7udm7hu76uh7y26nf3efuylqabf3oclgtqy55fbzdi"
-});
+// 2. Upload Digital Artwork or Data
+async function uploadFile(filePath) {
+  const data = new FormData();
+  data.append('file', fs.createReadStream(filePath));
+  
+  const res = await axios.post(\`\${API_BASE}/pinning/pinFileToIPFS\`, data, {
+    headers: {
+      ...data.getHeaders(),
+      pinata_api_key: API_KEY,
+      pinata_secret_api_key: API_SECRET
+    }
+  });
+  console.log('Permanent Link Created:', res.data.IpfsHash);
+}`;
 
-console.log('Pinned to IPFS:', result.IpfsHash);`;
+  const pythonCode = `# Connect to PinBunker using Python
+import requests
 
-  const pythonCode = `# 100% Drop-In with pinatapy!
-from pinatapy import PinataPy
+API_BASE = "https://api.pinbunker.u.limo"
+HEADERS = {
+    "pinata_api_key": "${currentApiKey}",
+    "pinata_secret_api_key": "${currentApiSecret}"
+}
 
-# Initialize client pointed at PinBunker gateway
-pinata = PinataPy(
-    pinata_api_key="${currentApiKey}",
-    pinata_secret_api_key="${currentApiSecret}",
-    api_url="https://api.pinbunker.u.limo"
-)
+# 1. Verify Authentication
+res = requests.get(f"{API_BASE}/data/testAuthentication", headers=HEADERS)
+print("Connected:", res.json()["message"])
 
-# Pin File
-res = pinata.pin_file_to_ipfs("metadata.json")
-print("Pinned CID:", res["IpfsHash"])
+# 2. Upload and Permanently Lock File
+with open("artwork.png", "rb") as f:
+    upload_res = requests.post(
+        f"{API_BASE}/pinning/pinFileToIPFS",
+        headers=HEADERS,
+        files={"file": f}
+    )
+    print("Permanent Web Address:", upload_res.json()["IpfsHash"])`;
 
-# List pins
-pins = pinata.pin_list()
-print("Total pins:", pins["count"])`;
-
-  const curlCode = `# 1. Test Authentication
+  const curlCode = `# 1. Verify Connection
 curl -X GET "https://api.pinbunker.u.limo/data/testAuthentication" \\
   -H "pinata_api_key: ${currentApiKey}" \\
   -H "pinata_secret_api_key: ${currentApiSecret}"
 
-# 2. Pin JSON to IPFS
+# 2. Save JSON or Artwork Metadata
 curl -X POST "https://api.pinbunker.u.limo/pinning/pinJSONToIPFS" \\
   -H "Content-Type: application/json" \\
   -H "Authorization: Bearer ${currentJwt}" \\
-  -d '{"pinataContent": {"name": "Sovereign Asset", "tier": "Builder"}}'
+  -d '{"name": "Genesis Collection #1", "description": "Permanent Digital Art"}'
 
-# 3. Pin File to IPFS (Multipart)
+# 3. Upload Any File
 curl -X POST "https://api.pinbunker.u.limo/pinning/pinFileToIPFS" \\
   -H "Authorization: Bearer ${currentJwt}" \\
-  -F "file=@./image.png"`;
+  -F "file=@./artwork.png"`;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
@@ -156,43 +167,43 @@ curl -X POST "https://api.pinbunker.u.limo/pinning/pinFileToIPFS" \\
             <Code2 className="w-5 h-5" />
           </div>
           <div>
-            <h3 className="text-xl font-bold font-mono text-white">
-              Drop-In SDK Integration
+            <h3 className="text-xl font-bold text-white">
+              Developer Quick Start
             </h3>
-            <p className="text-xs text-gray-400 font-mono">
-              Switch from Pinata to PinBunker in 30 seconds with 0 code refactoring.
+            <p className="text-xs text-gray-400">
+              Integrate permanent decentralized storage into your app in under two minutes.
             </p>
           </div>
         </div>
 
-        {/* API Key Generation Box */}
-        <div className="mb-6 p-4 rounded-xl bg-gray-900/90 border border-gray-800 font-mono text-xs">
+        {/* API Key Box */}
+        <div className="mb-6 p-4 rounded-xl bg-gray-900/90 border border-gray-800 text-xs">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
               <Key className="w-4 h-4 text-bunker-accent" />
-              <span className="text-white font-bold">Sovereign API Keys</span>
+              <span className="text-white font-bold">Your API Credentials</span>
             </div>
             {isConnected ? (
               <button
                 onClick={handleGenerateKey}
                 disabled={isGenerating}
-                className="px-3 py-1 rounded bg-bunker-accent text-black font-semibold hover:bg-emerald-300 transition-colors flex items-center gap-1.5"
+                className="px-3.5 py-1.5 rounded-lg bg-bunker-accent text-black font-semibold hover:bg-emerald-300 transition-colors flex items-center gap-1.5"
               >
                 <ShieldCheck className="w-3.5 h-3.5" />
-                <span>{isGenerating ? 'Signing...' : generatedKey ? 'Regenerate Keys' : 'Generate Keys'}</span>
+                <span>{isGenerating ? 'Generating...' : generatedKey ? 'Generate New Keys' : 'Generate Keys'}</span>
               </button>
             ) : (
-              <span className="text-gray-400 text-[11px]">Connect wallet to issue custom keys</span>
+              <span className="text-gray-400 text-xs">Connect your wallet to generate API credentials</span>
             )}
           </div>
 
           {generatedKey && (
-            <div className="space-y-2 mt-3 pt-3 border-t border-gray-800">
-              <div className="flex justify-between items-center bg-black/40 p-2 rounded">
+            <div className="space-y-2 mt-3 pt-3 border-t border-gray-800 font-mono">
+              <div className="flex justify-between items-center bg-black/50 p-2.5 rounded-lg">
                 <span className="text-gray-400">API Key:</span>
                 <span className="text-emerald-400 select-all">{generatedKey.apiKey}</span>
               </div>
-              <div className="flex justify-between items-center bg-black/40 p-2 rounded">
+              <div className="flex justify-between items-center bg-black/50 p-2.5 rounded-lg">
                 <span className="text-gray-400">Secret:</span>
                 <span className="text-emerald-400 select-all">{generatedKey.apiSecret}</span>
               </div>
@@ -201,36 +212,36 @@ curl -X POST "https://api.pinbunker.u.limo/pinning/pinFileToIPFS" \\
         </div>
 
         {/* Tabs */}
-        <div className="flex items-center gap-2 border-b border-gray-800 mb-4 font-mono text-xs">
+        <div className="flex items-center gap-2 border-b border-gray-800 mb-4 text-xs font-semibold">
           <button
             onClick={() => setActiveTab('nodejs')}
-            className={`px-4 py-2 font-medium border-b-2 transition-colors ${
+            className={`px-4 py-2 border-b-2 transition-colors ${
               activeTab === 'nodejs'
                 ? 'border-bunker-accent text-bunker-accent'
                 : 'border-transparent text-gray-400 hover:text-white'
             }`}
           >
-            Node.js (@pinata/sdk)
+            Node.js
           </button>
           <button
             onClick={() => setActiveTab('python')}
-            className={`px-4 py-2 font-medium border-b-2 transition-colors ${
+            className={`px-4 py-2 border-b-2 transition-colors ${
               activeTab === 'python'
                 ? 'border-bunker-accent text-bunker-accent'
                 : 'border-transparent text-gray-400 hover:text-white'
             }`}
           >
-            Python (pinatapy)
+            Python
           </button>
           <button
             onClick={() => setActiveTab('curl')}
-            className={`px-4 py-2 font-medium border-b-2 transition-colors ${
+            className={`px-4 py-2 border-b-2 transition-colors ${
               activeTab === 'curl'
                 ? 'border-bunker-accent text-bunker-accent'
                 : 'border-transparent text-gray-400 hover:text-white'
             }`}
           >
-            cURL / REST
+            cURL / Terminal
           </button>
         </div>
 
@@ -243,7 +254,7 @@ curl -X POST "https://api.pinbunker.u.limo/pinning/pinFileToIPFS" \\
                 'snippet'
               )
             }
-            className="absolute top-3 right-3 p-1.5 rounded bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white flex items-center gap-1 text-[11px] transition-colors border border-gray-700"
+            className="absolute top-3 right-3 p-1.5 rounded bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white flex items-center gap-1 text-xs transition-colors border border-gray-700"
           >
             {copiedIndex === 'snippet' ? (
               <>
@@ -265,8 +276,8 @@ curl -X POST "https://api.pinbunker.u.limo/pinning/pinFileToIPFS" \\
           </pre>
         </div>
 
-        <div className="mt-6 text-center text-xs text-gray-400 font-mono">
-          Endpoint is live 24/7 on Cynthia's dedicated porkchop VPS • announcements directly to IPFS DHT
+        <div className="mt-6 text-center text-xs text-gray-400">
+          Permanent decentralized storage • Guaranteed 24/7 global availability
         </div>
 
       </div>
